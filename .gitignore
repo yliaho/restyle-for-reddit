@@ -3,6 +3,7 @@ dist/*
 src/*
 .env
 yarn.lock
+node_modules/
 
 # gitkeep
 !src/.gitkeep
