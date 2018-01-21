@@ -1,0 +1,18 @@
+{
+  "name": "restyle",
+  "version": "0.1.0",
+  "license": "MIT",
+  "bin": {
+    "restyle": "./bin/restyle.js"
+  },
+  "scripts": {
+    "watch": "sass --sourcemap=none --watch src:dist --style compressed",
+    "publish": "node bin/restyle.js publish"
+  },
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "commander": "^2.13.0",
+    "dotenv": "^4.0.0",
+    "snoowrap": "^1.15.2"
+  }
+}

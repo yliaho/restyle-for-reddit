@@ -1,0 +1,9 @@
+.sass-cache/
+dist/*
+src/*
+.env
+yarn.lock
+
+# gitkeep
+!src/.gitkeep
+!dist/.gitkeep
