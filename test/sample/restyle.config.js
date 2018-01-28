@@ -9,6 +9,7 @@ module.exports = {
     clientSecret: process.env.R_CLIENT_SECRET
   },
 
-  cssPath: path.resolve(__dirname, 'dist/index.css'),
+  input: path.resolve(__dirname, 'style.scss'),
+  output: path.resolve(__dirname, 'index.css'),
   subreddit: 'ValleTheme'
 }

@@ -1,10 +1,5 @@
 .sass-cache/
 dist/*
-src/*
 .env
-yarn.lock
 node_modules/
-
-# gitkeep
-!src/.gitkeep
-!dist/.gitkeep
+rollup.config.js

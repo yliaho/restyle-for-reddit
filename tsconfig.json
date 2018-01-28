@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "pretty": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es5",
+    "diagnostics": true,
+    "lib": ["es5", "es6", "es2015.generator", "es2015.promise"],
+    "noEmitOnError": false,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "bin"],
+  "exclude": ["dist", "node_modules"]
+}

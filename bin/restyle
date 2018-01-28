@@ -1,0 +1,141 @@
+#!/usr/bin/env node
+'use strict';
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var Snoowrap = _interopDefault(require('snoowrap'));
+var sass = require('node-sass');
+var path = _interopDefault(require('path'));
+var fs = _interopDefault(require('fs'));
+var util = require('util');
+var program = _interopDefault(require('commander'));
+
+var author = {"name":"Joonas Yliaho","email":"joonas.yliaho@gmail.com"};
+var version = "0.1.0";
+
+var RedditConnector = /** @class */ (function () {
+    function RedditConnector(credentials) {
+        this.username = null;
+        this.password = null;
+        this.clientId = null;
+        this.clientSecret = null;
+        this.userAgent = null;
+        this.snoowrap = null;
+        this.username = credentials.username;
+        this.password = credentials.password;
+        this.clientId = credentials.clientId;
+        this.clientSecret = credentials.clientSecret;
+        this.userAgent =
+            "RESTYLE - Publish stylesheets from your favourite code editor." +
+                ("Author: " + author + ", Version: " + version);
+        this.connect();
+    }
+    RedditConnector.prototype.connect = function () {
+        this.snoowrap = new Snoowrap({
+            username: this.username,
+            password: this.password,
+            clientId: this.clientId,
+            clientSecret: this.clientSecret,
+            userAgent: this.userAgent
+        });
+    };
+    Object.defineProperty(RedditConnector.prototype, "r", {
+        get: function () {
+            return this.snoowrap;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return RedditConnector;
+}());
+
+var ScssCompiler = /** @class */ (function () {
+    function ScssCompiler() {
+    }
+    ScssCompiler.prototype.render = function (file) {
+        return new Promise(function (resolve, reject) {
+            sass.render({
+                file: file,
+                outputStyle: 'compressed'
+            }, function (error, result) {
+                if (error)
+                    return reject(error);
+                if (result.css)
+                    return resolve(result);
+                reject(result);
+            });
+        });
+    };
+    return ScssCompiler;
+}());
+
+var readFileAsync = util.promisify(fs.readFile);
+var writeFileAsync = util.promisify(fs.writeFile);
+var isDev = process.env.NODE_ENV === 'development' ? true : false;
+var Restyle = /** @class */ (function () {
+    function Restyle() {
+        this.connector = null;
+        this.config = null;
+        this.scssCompiler = null;
+        this.init();
+    }
+    Restyle.prototype.init = function () {
+        this.scssCompiler = new ScssCompiler();
+        this.initConfig();
+        this.initConnector();
+    };
+    Restyle.prototype.initConfig = function () {
+        this.config = isDev
+            ? require(path.resolve(process.cwd(), 'test/sample/restyle.config.js'))
+            : require(path.resolve(process.cwd(), 'restyle.config.js'));
+    };
+    Restyle.prototype.initConnector = function () {
+        this.connector = new RedditConnector(this.config.credentials);
+    };
+    Restyle.prototype.compileScss = function (input, output) {
+        var _this = this;
+        this.scssCompiler.render(input).then(function (render) {
+            writeFileAsync(output, render.css).then(function () {
+                return _this.publish(_this.config.output);
+            });
+        });
+    };
+    Restyle.prototype.watch = function (interval) {
+        var _this = this;
+        var _a = this.config, input = _a.input, output = _a.output;
+        fs.watchFile(input, { interval: interval }, function (_curr, _prev) {
+            _this.compileScss(input, output);
+        });
+    };
+    Restyle.prototype.publish = function (cssPath) {
+        var _this = this;
+        readFileAsync(cssPath, { encoding: 'utf8' }).then(function (css) {
+            _this.connector.r
+                .getSubreddit(_this.config.subreddit)
+                .updateStylesheet({
+                css: css,
+                reason: 'restyle'
+            })
+                .then(status)
+                .catch(function (_error) { return errorHandler('Invalid CSS'); });
+        });
+        function status(result) {
+            console.log(result);
+        }
+        function errorHandler(error) {
+            console.log(error);
+        }
+    };
+    return Restyle;
+}());
+
+var restyle = new Restyle();
+function pushCssToSub() {
+    restyle.watch(1000);
+}
+program
+    .version(process.env.VERSION)
+    .command('publish [css] [subreddit]')
+    .action(pushCssToSub);
+program.parse(process.argv);
+//# sourceMappingURL=index.js.map
