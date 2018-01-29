@@ -10,7 +10,7 @@ function pushCssToSub() {
 
 program
   .version(process.env.VERSION)
-  .command('publish [css] [subreddit]')
+  .command('watch [css] [subreddit]')
   .action(pushCssToSub)
 
 program.parse(process.argv)

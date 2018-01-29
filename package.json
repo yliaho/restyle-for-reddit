@@ -1,17 +1,23 @@
 {
-  "name": "restyle",
+  "name": "restyle-reddit",
+  "description": "Publish subreddit CSS from your favourite code editor",
   "author": {
     "name": "Joonas Yliaho",
     "email": "joonas.yliaho@gmail.com"
   },
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "bin": {
     "restyle": "./bin/restyle"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yliaho/restyle-for-reddit"
+  },
+  "keywords": ["reddit", "stylesheet", "scss", "css", "moderator"],
   "scripts": {
     "watch": "rollup -cw",
-    "publish": "NODE_ENV=production node bin/restyle publish",
+    "start": "NODE_ENV=production node bin/restyle publish",
     "test": "NODE_ENV=development node_modules/.bin/mocha"
   },
   "dependencies": {
