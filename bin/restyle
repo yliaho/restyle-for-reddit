@@ -11,7 +11,7 @@ var util = require('util');
 var program = _interopDefault(require('commander'));
 
 var author = {"name":"Joonas Yliaho","email":"joonas.yliaho@gmail.com"};
-var version = "0.2.11";
+var version = "0.2.12";
 
 var RedditConnector = /** @class */ (function () {
     function RedditConnector(credentials) {
@@ -138,3 +138,4 @@ program
     .command('watch [css] [subreddit]')
     .action(pushCssToSub);
 program.parse(process.argv);
+//# sourceMappingURL=index.js.map
