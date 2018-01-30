@@ -18,7 +18,7 @@
   "scripts": {
     "watch": "rollup -cw",
     "start": "NODE_ENV=production node bin/restyle publish",
-    "test": "NODE_ENV=development node_modules/.bin/mocha"
+    "test": "NODE_ENV=development mocha -r ts-node/register test/**/*.spec.ts"
   },
   "dependencies": {
     "chalk": "^2.3.0",
@@ -30,6 +30,8 @@
     "typescript": "^2.6.2"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.2",
+    "@types/mocha": "^2.2.47",
     "@types/node": "^9.4.0",
     "@types/node-sass": "^3.10.32",
     "@types/snoowrap": "^1.14.3",
@@ -42,6 +44,7 @@
     "rollup-plugin-node-resolve": "^3.0.2",
     "rollup-plugin-string": "^2.0.2",
     "rollup-plugin-typescript": "^0.8.1",
-    "rollup-watch": "^4.3.1"
+    "rollup-watch": "^4.3.1",
+    "ts-node": "^4.1.0"
   }
 }

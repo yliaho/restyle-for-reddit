@@ -1,5 +1,5 @@
-import Snoowrap from 'snoowrap'
-import { version as VERSION, author as AUTHOR } from 'package.json'
+import * as Snoowrap from 'snoowrap'
+import { version as VERSION, author as AUTHOR } from '../../package.json'
 
 export default class RedditConnector {
   private username: string = null

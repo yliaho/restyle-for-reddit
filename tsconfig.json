@@ -12,6 +12,6 @@
     "noUnusedLocals": true,
     "skipLibCheck": true
   },
-  "include": ["src", "bin"],
+  "include": ["test/**/*.spec.ts", "src", "bin"],
   "exclude": ["dist", "node_modules"]
 }

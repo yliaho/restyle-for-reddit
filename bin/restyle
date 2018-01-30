@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 'use strict';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+Object.defineProperty(exports, '__esModule', { value: true });
 
-var Snoowrap = _interopDefault(require('snoowrap'));
+var Snoowrap = require('snoowrap');
 var sass = require('node-sass');
-var path = _interopDefault(require('path'));
-var fs = _interopDefault(require('fs'));
+var path = require('path');
+var fs = require('fs');
 var util = require('util');
-var program = _interopDefault(require('commander'));
+var program = require('commander');
 
 var author = {"name":"Joonas Yliaho","email":"joonas.yliaho@gmail.com"};
 var version = "0.2.12";
@@ -133,9 +133,12 @@ var restyle = new Restyle();
 function pushCssToSub() {
     restyle.watch(1000);
 }
-program
-    .version(process.env.VERSION)
+function testFunc() {
+    return 'hello';
+}
+program.version(process.env.VERSION)
     .command('watch [css] [subreddit]')
     .action(pushCssToSub);
 program.parse(process.argv);
-//# sourceMappingURL=index.js.map
+
+exports.testFunc = testFunc;

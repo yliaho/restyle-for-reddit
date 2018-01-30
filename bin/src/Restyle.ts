@@ -1,5 +1,5 @@
-import path from 'path'
-import fs from 'fs'
+import * as path from 'path'
+import * as fs from 'fs'
 import RedditConnector from './redditConnection'
 import ScssCompiler from './scssCompiler'
 import * as util from 'util'
@@ -7,7 +7,7 @@ import * as util from 'util'
 const readFileAsync = util.promisify(fs.readFile)
 const writeFileAsync = util.promisify(fs.writeFile)
 
-const isDev = process.env.NODE_ENV === 'development' ? true : false
+export const isDev = process.env.NODE_ENV === 'development' ? true : false
 
 export default class Restyle {
   private connector: RedditConnector = null
