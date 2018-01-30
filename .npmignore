@@ -1,0 +1,14 @@
+test
+doc
+dist
+typings
+rollup.config.js
+tsconfig.json
+.prettierrc
+.gitignore
+node_modules
+.sass-cache/
+dist/*
+.env
+node_modules/
+bin/src

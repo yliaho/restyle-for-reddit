@@ -10,7 +10,7 @@ var util = require('util');
 var path = require('path');
 
 var author = {"name":"Joonas Yliaho","email":"joonas.yliaho@gmail.com"};
-var version = "0.2.12";
+var version = "0.2.15";
 
 class RedditConnector {
     constructor(credentials) {
@@ -160,5 +160,6 @@ program
     .command('watch [css] [subreddit]')
     .action(pushCssToSub);
 program.parse(process.argv);
+//# sourceMappingURL=index.js.map
 
 exports.isDev = isDev;

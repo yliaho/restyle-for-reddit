@@ -5,7 +5,7 @@
     "name": "Joonas Yliaho",
     "email": "joonas.yliaho@gmail.com"
   },
-  "version": "0.2.12",
+  "version": "0.2.15",
   "license": "MIT",
   "bin": {
     "restyle": "./bin/restyle"
@@ -14,13 +14,7 @@
     "type": "git",
     "url": "https://github.com/yliaho/restyle-for-reddit"
   },
-  "keywords": [
-    "reddit",
-    "stylesheet",
-    "scss",
-    "css",
-    "moderator"
-  ],
+  "keywords": ["reddit", "stylesheet", "scss", "css", "moderator"],
   "scripts": {
     "watch": "rollup -cw",
     "start": "NODE_ENV=production node bin/restyle publish",
