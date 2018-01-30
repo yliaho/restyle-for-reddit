@@ -78,7 +78,7 @@ Now write whatever SCSS you want.
 
 ## Watch for file changes and publish to subreddit
 
-Restyle can watch for file changes and compile/publish the results to your subreddit automatically. Run `$ node_modules/.bin/restyle publish` once you're ready and watch the magic happen on your specified subreddit.
+Restyle can watch for file changes and compile/publish the results to your subreddit automatically. Run `$ node_modules/.bin/restyle watch` once you're ready and watch the magic happen on your specified subreddit.
 
 ## Want to help make Restyle better?
 

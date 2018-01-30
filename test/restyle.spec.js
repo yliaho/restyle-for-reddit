@@ -5,7 +5,7 @@ const { exec } = require('child_process')
 const Restyle = require('../bin/restyle').isDev
 
 const cwd = process.cwd()
-const command = `node ${path.resolve(__dirname, '../bin/restyle')} publish`
+const command = `node ${path.resolve(__dirname, '../bin/restyle')} watch`
 
 describe('Restyle', function() {
   it('Should Not Throw an Error', () => {
