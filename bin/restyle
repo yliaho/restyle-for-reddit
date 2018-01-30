@@ -5,32 +5,34 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var Snoowrap = require('snoowrap');
 var sass = require('node-sass');
-var path = require('path');
 var fs = require('fs');
 var util = require('util');
-var program = require('commander');
+var path = require('path');
 
 var author = {"name":"Joonas Yliaho","email":"joonas.yliaho@gmail.com"};
 var version = "0.2.12";
 
-var RedditConnector = /** @class */ (function () {
-    function RedditConnector(credentials) {
+class RedditConnector {
+    constructor(credentials) {
         this.username = null;
         this.password = null;
         this.clientId = null;
         this.clientSecret = null;
         this.userAgent = null;
         this.snoowrap = null;
+        this.init(credentials);
+    }
+    init(credentials) {
         this.username = credentials.username;
         this.password = credentials.password;
         this.clientId = credentials.clientId;
         this.clientSecret = credentials.clientSecret;
         this.userAgent =
-            "RESTYLE - Publish stylesheets from your favourite code editor." +
-                ("Author: " + author + ", Version: " + version);
+            `RESTYLE - Publish stylesheets from your favourite code editor.` +
+                `Author: ${author}, Version: ${version}`;
         this.connect();
     }
-    RedditConnector.prototype.connect = function () {
+    connect() {
         this.snoowrap = new Snoowrap({
             username: this.username,
             password: this.password,
@@ -38,26 +40,19 @@ var RedditConnector = /** @class */ (function () {
             clientSecret: this.clientSecret,
             userAgent: this.userAgent
         });
-    };
-    Object.defineProperty(RedditConnector.prototype, "r", {
-        get: function () {
-            return this.snoowrap;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return RedditConnector;
-}());
-
-var ScssCompiler = /** @class */ (function () {
-    function ScssCompiler() {
     }
-    ScssCompiler.prototype.render = function (file) {
-        return new Promise(function (resolve, reject) {
+    get r() {
+        return this.snoowrap;
+    }
+}
+
+class ScssCompiler {
+    render(file) {
+        return new Promise((resolve, reject) => {
             sass.render({
-                file: file,
+                file,
                 outputStyle: 'compressed'
-            }, function (error, result) {
+            }, (error, result) => {
                 if (error)
                     return reject(error);
                 if (result.css)
@@ -65,59 +60,80 @@ var ScssCompiler = /** @class */ (function () {
                 reject(result);
             });
         });
-    };
-    return ScssCompiler;
-}());
+    }
+}
 
-var readFileAsync = util.promisify(fs.readFile);
-var writeFileAsync = util.promisify(fs.writeFile);
-var isDev = process.env.NODE_ENV === 'development' ? true : false;
-var Restyle = /** @class */ (function () {
-    function Restyle() {
+const MODULE_NAME = 'Restyle';
+//# sourceMappingURL=constants.js.map
+
+class InvalidConfig extends Error {
+    constructor() {
+        super(`${MODULE_NAME} couldn't resolve config file. Please provide restyle.config.js in your project root`);
+    }
+}
+class NoCredentials extends Error {
+    constructor() {
+        super(`${MODULE_NAME} couldn't find credentials property in restyle config. Please provide a credentials property with username, password, clientId and clientSecret`);
+    }
+}
+
+
+var errors = Object.freeze({
+	InvalidConfig: InvalidConfig,
+	NoCredentials: NoCredentials
+});
+
+const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
+class Restyle {
+    constructor(config) {
         this.connector = null;
         this.config = null;
         this.scssCompiler = null;
+        if (typeof config === 'string') {
+            this.config = require(config);
+        }
+        else if (typeof config === 'object') {
+            this.config = Object.assign({}, config);
+        }
+        else {
+            throw new InvalidConfig();
+        }
         this.init();
     }
-    Restyle.prototype.init = function () {
+    init() {
         this.scssCompiler = new ScssCompiler();
-        this.initConfig();
         this.initConnector();
-    };
-    Restyle.prototype.initConfig = function () {
-        this.config = isDev
-            ? require(path.resolve(process.cwd(), 'test/sample/restyle.config.js'))
-            : require(path.resolve(process.cwd(), 'restyle.config.js'));
-    };
-    Restyle.prototype.initConnector = function () {
-        this.connector = new RedditConnector(this.config.credentials);
-    };
-    Restyle.prototype.compileScss = function (input, output) {
-        var _this = this;
-        this.scssCompiler.render(input).then(function (render) {
-            writeFileAsync(output, render.css).then(function () {
-                return _this.publish(_this.config.output);
-            });
+    }
+    initConnector() {
+        if (this.config.credentials) {
+            this.connector = new RedditConnector(this.config.credentials);
+        }
+        else {
+            throw new NoCredentials();
+        }
+    }
+    compileScss(input, output) {
+        this.scssCompiler.render(input).then((render) => {
+            writeFileAsync(output, render.css).then(() => this.publish(this.config.output));
         });
-    };
-    Restyle.prototype.watch = function (interval) {
-        var _this = this;
-        var _a = this.config, input = _a.input, output = _a.output;
-        fs.watchFile(input, { interval: interval }, function (_curr, _prev) {
-            _this.compileScss(input, output);
+    }
+    watch(interval) {
+        const { input, output } = this.config;
+        fs.watchFile(input, { interval }, (_curr, _prev) => {
+            this.compileScss(input, output);
         });
-    };
-    Restyle.prototype.publish = function (cssPath) {
-        var _this = this;
-        readFileAsync(cssPath, { encoding: 'utf8' }).then(function (css) {
-            _this.connector.r
-                .getSubreddit(_this.config.subreddit)
+    }
+    publish(cssPath) {
+        readFileAsync(cssPath, { encoding: 'utf8' }).then(css => {
+            this.connector.r
+                .getSubreddit(this.config.subreddit)
                 .updateStylesheet({
-                css: css,
+                css,
                 reason: 'restyle'
             })
                 .then(status)
-                .catch(function (_error) { return errorHandler('Invalid CSS'); });
+                .catch(_error => errorHandler('Invalid CSS'));
         });
         function status(result) {
             console.log(result);
@@ -125,20 +141,24 @@ var Restyle = /** @class */ (function () {
         function errorHandler(error) {
             console.log(error);
         }
-    };
-    return Restyle;
-}());
+    }
+}
 
-var restyle = new Restyle();
+Restyle.errors = errors;
+
+const isDev = process.env.NODE_ENV === 'development' ? true : false;
+const configPath = isDev
+    ? require(path.resolve(process.cwd(), 'test/sample/restyle.config.js'))
+    : require(path.resolve(process.cwd(), 'restyle.confige.js'));
+const restyle = new Restyle(configPath);
 function pushCssToSub() {
     restyle.watch(1000);
 }
-function testFunc() {
-    return 'hello';
-}
-program.version(process.env.VERSION)
+const program = require('commander');
+program
+    .version(process.env.VERSION)
     .command('watch [css] [subreddit]')
     .action(pushCssToSub);
 program.parse(process.argv);
 
-exports.testFunc = testFunc;
+exports.isDev = isDev;

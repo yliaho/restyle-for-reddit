@@ -3,36 +3,40 @@ import * as fs from 'fs'
 import RedditConnector from './redditConnection'
 import ScssCompiler from './scssCompiler'
 import * as util from 'util'
+import * as errors from './errors'
 
 const readFileAsync = util.promisify(fs.readFile)
 const writeFileAsync = util.promisify(fs.writeFile)
-
-export const isDev = process.env.NODE_ENV === 'development' ? true : false
 
 export default class Restyle {
   private connector: RedditConnector = null
   public config: any = null
   public scssCompiler: ScssCompiler = null
 
-  constructor() {
+  constructor(config: string | object) {
+    if (typeof config === 'string') {
+      this.config = require(config)
+    } else if (typeof config === 'object') {
+      this.config = { ...config }
+    } else {
+      throw new errors.InvalidConfig()
+    }
+
     this.init()
   }
 
   private init() {
     this.scssCompiler = new ScssCompiler()
 
-    this.initConfig()
     this.initConnector()
   }
 
-  private initConfig() {
-    this.config = isDev
-      ? require(path.resolve(process.cwd(), 'test/sample/restyle.config.js'))
-      : require(path.resolve(process.cwd(), 'restyle.config.js'))
-  }
-
   private initConnector() {
-    this.connector = new RedditConnector(this.config.credentials)
+    if (this.config.credentials) {
+      this.connector = new RedditConnector(this.config.credentials)
+    } else {
+      throw new errors.NoCredentials()
+    }
   }
 
   public compileScss(input: string, output: string) {
@@ -72,3 +76,5 @@ export default class Restyle {
     }
   }
 }
+
+;(Restyle as any).errors = errors

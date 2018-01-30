@@ -11,6 +11,10 @@ export default class RedditConnector {
   public snoowrap: Snoowrap = null
 
   constructor(credentials: RedditCredentials) {
+    this.init(credentials)
+  }
+
+  private init(credentials) {
     this.username = credentials.username
     this.password = credentials.password
     this.clientId = credentials.clientId
@@ -18,7 +22,6 @@ export default class RedditConnector {
     this.userAgent =
       `RESTYLE - Publish stylesheets from your favourite code editor.` +
       `Author: ${AUTHOR}, Version: ${VERSION}`
-
     this.connect()
   }
 

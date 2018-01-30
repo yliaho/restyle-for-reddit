@@ -1,17 +1,19 @@
-import * as program from 'commander'
-import RedditConnector from './RedditConnection'
+import * as path from 'path'
 import Restyle from './Restyle'
 
-const restyle = new Restyle()
+export const isDev = process.env.NODE_ENV === 'development' ? true : false
+
+const configPath = isDev
+  ? require(path.resolve(process.cwd(), 'test/sample/restyle.config.js'))
+  : require(path.resolve(process.cwd(), 'restyle.confige.js'))
+
+const restyle = new Restyle(configPath)
 
 function pushCssToSub() {
   restyle.watch(1000)
 }
 
-export function testFunc() {
-  return 'hello'
-}
-
+const program = require('commander')
 program
   .version(process.env.VERSION)
   .command('watch [css] [subreddit]')
