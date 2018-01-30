@@ -31,10 +31,10 @@ describe('Restyle', function() {
 
   it('Should Not Throw an Error', () => {
     expect(
-      exec(command, {}, (error, stdout, stderr) => {
+      exec(command, {}, (error, code, stderr) => {
         if (error) throw Error(error as any)
 
-        console.log(stdout)
+        console.log(code)
         console.log(stderr)
       })
     ).to.not.throw
